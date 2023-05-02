@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bupa!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            font-family: Manrope;
+        }
+        svg#L4{
+            width: 100px;
+            height: 30px;
+            margin: 0;
+            display:inline-block;
+        }
+    </style>
+
+</head>
+<body>
+    <section class="py-10 bg-gray-50 sm:py-16 lg:py-24">
+        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+            <div class="max-w-xl mx-auto text-center">
+                <!-- <div class="inline-flex px-4 py-1.5 mx-auto rounded-full bg-gradient-to-r from-fuchsia-600 to-blue-600">
+                    <p class="text-xs font-semibold tracking-widest text-white uppercase">130+ Handcoded Blocks</p>
+                </div> -->
+                <h2 class="mt-10 text-3xl font-bold leading-tight text-black sm:text-3xl lg:text-4xl">Meet Bupa, your daily companion</h2>
+                <p class="mt-8 text-base leading-relaxed text-gray-600">First configure the bot mood and persona, and then write your question below to get a customised answer!</p>
+            </div>
+
+            <form action="#" class="max-w-xl mx-auto mt-10" method="post">
+
+                <div>
+                    <label class="sr-only"> Mood </label>
+                    <div class="relative border-1">
+                        <select name="mood" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
+                            <option value="neutral">Neutral</option>
+                            <option value="happy">Happy</option>
+                            <option value="angry">Angry</option>
+                            <option value="sad">Sad</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-2">
+                    <label class="sr-only"> Persona </label>
+                    <div class="relative border-1">
+                        <select name="persona" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
+                            <option value="optimus prime">Optimus Prime</option>
+                            <option value="shakespeare">Shakespeare</option>
+                            <option value="yoda">Yoda</option>
+                        </select>
+                </div>
+
+                <div class="mt-5">
+                    <label class="sr-only"> Search </label>
+                    <div class="relative border-1">
+                        
+                        <textarea type="text" name="text" maxlength="400" placeholder="Enter your text here..." class="block w-full py-3 pl-4 pr-4 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2" rows="5"></textarea>
+                    </div>
+                    <div id="html_element" class="mt-5"></div>
+                    <br>
+                </div>
+                <div class="mt-5">
+                  
+                    <button 
+                    type="submit" class="rounded-lg inline-flex items-center justify-center w-full px-4 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all duration-200 bg-gray-900 border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-white hover:bg-gray-700 ">
+                        <span>Get answer</span>
+                        <div class="hidden" id="svg_container">
+                            <svg version="1.1" id="L4"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                            viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
+                            <circle fill="#fff" stroke="none" cx="6" cy="50" r="6">
+                                <animate
+                                attributeName="opacity"
+                                dur="1s"
+                                values="0;1;0"
+                                repeatCount="indefinite"
+                                begin="0.1"/>    
+                            </circle>
+                            <circle fill="#fff" stroke="none" cx="26" cy="50" r="6">
+                                <animate
+                                attributeName="opacity"
+                                dur="1s"
+                                values="0;1;0"
+                                repeatCount="indefinite" 
+                                begin="0.2"/>       
+                            </circle>
+                            <circle fill="#fff" stroke="none" cx="46" cy="50" r="6">
+                                <animate
+                                attributeName="opacity"
+                                dur="1s"
+                                values="0;1;0"
+                                repeatCount="indefinite" 
+                                begin="0.3"/>     
+                            </circle>
+                            </svg>
+                        </div>
+                    </button>
+                    <div class="mt-8 border-t hidden" id="result">
+                        <audio controls class="w-full mt-8" id="audio_output" src="{{ url_for('static', filename='tts_output.wav') }}">
+                            
+                        </audio>
+                        <div id="download" class="cursor-pointer mt-5 rounded-lg inline-flex items-center justify-center w-full px-4 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all duration-200 bg-blue-400 border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-white hover:bg-gray-700 ">
+                            Download file
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        let apiError = false
+        let audioFile;
+        var onloadCallback = function() {
+      };
+      function toggleLoader () {
+        document.querySelector("#svg_container").classList.toggle("hidden")
+        document.querySelector("button span").classList.toggle("hidden")
+      }
+      submit = async (e) =>{
+        document.querySelector("#result").classList.add("hidden")
+        toggleLoader()
+        let data = new FormData(e.target)
+            e.preventDefault()
+            fetch("/ask", {
+                method: 'POST', 
+                body: data
+            }).then(async (response) => {
+                if(response)
+                if(response.status != 200) {
+                    let data = await response.json();
+                    apiError = true;
+                    alert("error calling api")
+                }else{
+                    const reader = response.body.getReader();
+                    return new ReadableStream({
+                        start(controller) {
+                            return pump();
+                            function pump() {
+                            return reader.read().then(({ done, value }) => {
+                                if (done) {
+                                controller.close();
+                                return;
+                                }
+                                controller.enqueue(value);
+                                return pump();
+                            });
+                            }
+                        }
+                })
+                }
+               
+            })
+            .then((stream) => new Response(stream))
+            .then((response) => response.blob())
+            .then((blob) => {
+                
+                return URL.createObjectURL(blob)
+            })
+            .then((url) => {
+                audioFile = url
+                if(!apiError){
+                    document.querySelector("#audio_output").src = url
+                    document.querySelector("#result").classList.remove("hidden")
+                }
+                console.log(url)
+                toggleLoader()
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+        }
+
+        function download() {
+            const elem = window.document.createElement('a');
+                elem.href =audioFile;
+                elem.download = "audio_ulife_ai.wav";        
+                document.body.appendChild(elem);
+                elem.click();        
+                document.body.removeChild(elem);
+        }
+
+        window.onload = function(){
+            document.querySelector("form").addEventListener("submit",  submit)
+            document.querySelector("#download").addEventListener("click",  download)
+
+        }
+    
+      </script>
+
+</body>
+</html>
