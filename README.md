@@ -5,7 +5,8 @@ customised answers to questions based on a given context.
 
 ## Showcase
 
-![Bupa](/assets/bupa_showcase_02052023.mp4)
+https://user-images.githubusercontent.com/35801678/235898200-560442c3-7408-4bfa-a239-d141a72e5605.mp4
+
 
 ## Prerequisites
 
