@@ -50,18 +50,38 @@ COQUI_AI_API_KEY=<your-coqui-ai-api-key>
 }
 ```
 
+4. Also, to get the speech representation of a text you can send a POST request to `http://localhost:5001/audio` with the following JSON body:
+
+```json
+{
+    "mood": "happy",
+    "persona": "yoda",
+    "text": "The human expectancy in the United States fortunately is 78 years old."
+}
+```
+
 ### Using Docker
 
 1. Build the Docker image with `docker build -t bupa-bot .`
 2. Run the Docker container with `docker run -p 5001:8080 bupa-bot`
 3. Access the server running at `http://localhost:5001/`, configure the Bopa bot and submit a question
-4. Or, as an alternative, send a POST request to `http://localhost:5001/ask` with the following JSON body:
+4. Or, as an alternative, to get a response you can send a POST request to `http://localhost:5001/answer` with the following JSON body:
 
 ```json
 {
     "mood": "happy",
     "persona": "yoda",
     "text": "What is human life expectancy in the United States?"
+}
+```
+
+5. Also, to get the speech representation of a text you can send a POST request to `http://localhost:5001/audio` with the following JSON body:
+
+```json
+{
+    "mood": "happy",
+    "persona": "yoda",
+    "text": "The human expectancy in the United States fortunately is 78 years old."
 }
 ```
 
