@@ -7,6 +7,7 @@ import openai
 import os
 import requests
 import json
+from app.robot_filter import apply_robot_voice
 
 @app.route("/")
 def index():
@@ -96,7 +97,6 @@ def process_question():
 
             # Get the response content
             response_content = response.json()
-            print(response_content)
 
             # Check if the response is successful
             if response.status_code != 201:
@@ -109,13 +109,24 @@ def process_question():
 
             # Download the audio file and serve it
             response = requests.get(audio_url)
-            return send_file(io.BytesIO(response.content), mimetype="audio/wav")
+
+            # Apply robot voice filter
+            if os.getenv("ROBOT_FILTER") == "true":
+                robot_output = apply_robot_voice(io.BytesIO(response.content))
+
+
+            return send_file(io.BytesIO(robot_output), mimetype="audio/wav")
 
         elif os.getenv("TTS_MODE") == "default":
             outputs = synthesizer.tts(answer)
             out = io.BytesIO()
             synthesizer.save_wav(outputs, out)
-            return send_file(out, mimetype="audio/wav")
+
+            # Apply robot voice filter
+            if os.getenv("ROBOT_FILTER") == "true":
+                robot_output = apply_robot_voice(io.BytesIO(out.getvalue()))
+
+            return send_file(io.BytesIO(robot_output), mimetype="audio/wav")
         else:
             return {"error": "tts mode not supported"}, 400
 
