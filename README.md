@@ -5,7 +5,7 @@ customised answers to questions based on a given context.
 
 ## Showcase
 
-### (1.1) Short emotions tts demo as of 26 May 2023
+### (1.1) Short emotions with robot filter tts demo as of 26 May 2023
 
 https://github.com/pedromspeixoto/bupa/assets/35801678/05022041-4495-4e74-b5f8-825f67ff32fc
 
