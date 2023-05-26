@@ -56,13 +56,36 @@ def process_question():
             api_key=os.getenv("OPENAI_API_KEY"),
             model=os.getenv("OPENAI_MODEL"),
             messages=messages,
-            temperature=0.2
+            temperature=0.8
         )
         answer = response.choices[0].message["content"]
         #answer = "Feeling angry, I am."
-        print(answer)
+
+        return {"answer": answer}, 200
     except Exception as e:
         return {"error": f"could not get response from openai: {str(e)}"}, 500
+
+
+@app.route("/audio", methods = ["POST"])
+def generate_audio():
+    if(request.form["mood"]):
+        mood = request.form["mood"]
+        if mood not in ["happy", "sad", "angry", "neutral"]:
+            return {"error": "Please provide a valid mood"}, 400
+    else:
+        return {"error": "Please provide the bot mood"}, 400
+
+    if(request.form["persona"]):
+        persona = request.form["persona"]
+        if persona not in ["optimus prime", "shakespeare", "yoda"]:
+            return {"error": "Please provide a valid persona"}, 400                
+    else:
+        return {"error": "Please provide the bot persona"}, 400
+
+    if(request.form["text"]):
+        text = request.form["text"]
+    else:
+        return {"error": "Please provide the text"}, 400
 
     # process answer to speech
     try:
@@ -84,8 +107,8 @@ def process_question():
             # Request payload
             payload = {
                 "emotion": emotion,
-                "speed": 1.0,
-                "text": answer,
+                "speed": 0.8,
+                "text": text,
                 "prompt": f"A voice that sounds like {persona} and is {mood}"
             }
 
@@ -114,11 +137,10 @@ def process_question():
             if os.getenv("ROBOT_FILTER") == "true":
                 robot_output = apply_robot_voice(io.BytesIO(response.content))
 
-
             return send_file(io.BytesIO(robot_output), mimetype="audio/wav")
 
         elif os.getenv("TTS_MODE") == "default":
-            outputs = synthesizer.tts(answer)
+            outputs = synthesizer.tts(text)
             out = io.BytesIO()
             synthesizer.save_wav(outputs, out)
 
