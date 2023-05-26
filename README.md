@@ -5,6 +5,12 @@ customised answers to questions based on a given context.
 
 ## Showcase
 
+### (1.1) Demo as of 26 May 2023
+
+(to be added)
+
+### (1.0) Demo as of 29 April 2023
+
 https://user-images.githubusercontent.com/35801678/235898200-560442c3-7408-4bfa-a239-d141a72e5605.mp4
 
 
