@@ -21,6 +21,11 @@ https://user-images.githubusercontent.com/35801678/235898200-560442c3-7408-4bfa-
 ```bash
 OPENAI_API_KEY=<your-openai-api-key>
 OPENAI_MODEL=gpt-3.5-turbo
+
+TTS_MODE=coqui-ai
+
+COQUI_AI_BASE_URL=https://app.coqui.ai/api/v2/samples/from-prompt/
+COQUI_AI_API_KEY=<your-coqui-ai-api-key>
 ```
 
 ## Usage
@@ -53,6 +58,15 @@ OPENAI_MODEL=gpt-3.5-turbo
     "text": "What is human life expectancy in the United States?"
 }
 ```
+
+## Next steps
+
+- [ ] On the existing architecture, create a robot filter to apply to the final audio
+- [ ] Create or adapt datasets with emotion for training the TTS models
+- [ ] Apply the robot filter to the emotion dataset
+- [ ] Train different models for different moods and personas (notebooks already available to train new models using GlowTTS and VITS)
+- [ ] Add more moods and personas
+- [ ] Use our own GPT model instead of the OpenAI API
 
 ## Acknowledgements
 

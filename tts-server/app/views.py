@@ -5,6 +5,8 @@ from flask import render_template, request, send_file, send_from_directory
 from app.tts import synthesizer
 import openai
 import os
+import requests
+import json
 
 @app.route("/")
 def index():
@@ -52,21 +54,71 @@ def process_question():
         response = openai.ChatCompletion.create(
             api_key=os.getenv("OPENAI_API_KEY"),
             model=os.getenv("OPENAI_MODEL"),
-           messages=messages,
-            temperature=0
+            messages=messages,
+            temperature=0.2
         )
         answer = response.choices[0].message["content"]
+        #answer = "Feeling angry, I am."
         print(answer)
     except Exception as e:
-        print(str(e))
         return {"error": f"could not get response from openai: {str(e)}"}, 500
 
     # process answer to speech
     try:
-        outputs = synthesizer.tts(answer)
-        out = io.BytesIO()
-        synthesizer.save_wav(outputs, out)
-        return send_file(out, mimetype="audio/wav")
+        if os.getenv("TTS_MODE") == "coqui-ai":                                    
+            # Adapt emotion to have first letter capitalized
+            emotion = mood.capitalize()
+
+            # Read environment variables
+            url = os.getenv("COQUI_AI_BASE_URL")
+            bearer_token = os.getenv("COQUI_AI_API_KEY")
+
+            # Request headers
+            headers = {
+                "accept": "application/json",
+                "authorization": f"Bearer {bearer_token}",
+                "content-type": "application/json",
+            }
+
+            # Request payload
+            payload = {
+                "emotion": emotion,
+                "speed": 1.0,
+                "text": answer,
+                "prompt": f"A voice that sounds like {persona} and is {mood}"
+            }
+
+            # Convert payload to JSON format
+            data = json.dumps(payload)
+
+            # Send POST request
+            response = requests.post(url, headers=headers, data=data)
+
+            # Get the response content
+            response_content = response.json()
+            print(response_content)
+
+            # Check if the response is successful
+            if response.status_code != 201:
+                return {"error": response_content["detail"]}, response.status_code
+
+            # Download file and return it
+            response_data = response.json()
+            audio_url = response_data["audio_url"]
+            #audio_url = "https://coqui-prod-creator-app-synthesized-samples.s3.amazonaws.com/samples/21103afc-88dd-46cb-8de4-aa25fee8e611.wav"
+
+            # Download the audio file and serve it
+            response = requests.get(audio_url)
+            return send_file(io.BytesIO(response.content), mimetype="audio/wav")
+
+        elif os.getenv("TTS_MODE") == "default":
+            outputs = synthesizer.tts(answer)
+            out = io.BytesIO()
+            synthesizer.save_wav(outputs, out)
+            return send_file(out, mimetype="audio/wav")
+        else:
+            return {"error": "tts mode not supported"}, 400
+
     except Exception as e:
         print(str(e))
         return {"error": f"could not synthetise response from answer: {str(e)}"}, 500
