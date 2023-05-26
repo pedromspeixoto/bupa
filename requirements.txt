@@ -4,3 +4,4 @@ python-dotenv>=0.21.0
 TTS>=0.8.0
 pydub
 scipy
+gpt4all

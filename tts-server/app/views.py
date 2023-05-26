@@ -8,6 +8,7 @@ import os
 import requests
 import json
 from app.robot_filter import apply_robot_voice
+from gpt4all import GPT4All
 
 @app.route("/")
 def index():
@@ -39,32 +40,48 @@ def process_question():
     else:
         return {"error": "Please provide the text"}, 400
 
-    # build the messages to send to chatgpt based on the mood and persona
-    try:
-        messages = [
-            { "role": "system", "content": f"You provide the answers only, without any indication you are an AI model and all answers must have some kind of indication of a {mood} tone and that you are {persona}." },
-            { "role": "user", "content": text } 
-        ]
-        print(messages)
-    except Exception as e:
-        print(str(e))
-        return {"error": f"could not build system message to send to openai: {str(e)}"}, 500
+    gpt_mode = os.getenv("GPT_MODE")
 
-    # process the question and generate response from chatgpt
-    try:
-        response = openai.ChatCompletion.create(
-            api_key=os.getenv("OPENAI_API_KEY"),
-            model=os.getenv("OPENAI_MODEL"),
-            messages=messages,
-            temperature=0.8
-        )
-        answer = response.choices[0].message["content"]
-        #answer = "Feeling angry, I am."
+    if gpt_mode == "openai":
+        # build the messages to send to openai chatgpt based on the mood and persona
+        try:
+            messages = [
+                { "role": "system", "content": f"You provide the answers only, without any indication you are an AI model and all answers must have some kind of indication of a {mood} tone and that you are {persona}." },
+                { "role": "user", "content": text } 
+            ]
+        except Exception as e:
+            print(str(e))
+            return {"error": f"could not build system message to send to openai: {str(e)}"}, 500
 
-        return {"answer": answer}, 200
-    except Exception as e:
-        return {"error": f"could not get response from openai: {str(e)}"}, 500
+        # process the question and generate response from openai chatgpt
+        try:
+            response = openai.ChatCompletion.create(
+                api_key=os.getenv("OPENAI_API_KEY"),
+                model=os.getenv("OPENAI_MODEL"),
+                messages=messages,
+                temperature=0.2
+            )
+            answer = response.choices[0].message["content"]
+            #answer = "Feeling angry, I am."
 
+            return {"answer": answer}, 200
+        except Exception as e:
+            return {"error": f"could not get response from openai: {str(e)}"}, 500
+    elif gpt_mode == "local":
+        # build the messages to send to local gpt4all model based on the mood and persona
+        try:
+            model = GPT4All('ggml-gpt4all-j-v1.3-groovy.bin', model_path='./bin/')
+            messages = [
+                { "role": "user", "content": f"You provide the answers only, without any indication you are an AI model and all answers must have some kind of indication of a {mood} tone and that you are {persona}. Provide an answer to this {text}" },
+            ]
+            #messages = [{"role": "user", "content": "Can you explain what is a large language model?"}]
+            answer = model.chat_completion(messages)
+            return {"answer": answer['choices'][0]['message']['content']}, 200
+        except Exception as e:
+            print(str(e))
+            return {"error": f"could not build system message to send to local gpt4all: {str(e)}"}, 500
+    else:
+        return {"error": "gpt mode not supported"}, 400
 
 @app.route("/audio", methods = ["POST"])
 def generate_audio():
@@ -107,7 +124,7 @@ def generate_audio():
             # Request payload
             payload = {
                 "emotion": emotion,
-                "speed": 0.8,
+                "speed": 1.2,
                 "text": text,
                 "prompt": f"A voice that sounds like {persona} and is {mood}"
             }

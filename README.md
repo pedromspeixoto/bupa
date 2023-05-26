@@ -87,7 +87,7 @@ COQUI_AI_API_KEY=<your-coqui-ai-api-key>
 
 ## Next steps
 
-- [ ] On the existing architecture, create a robot filter to apply to the final audio
+- [x] On the existing architecture, create a robot filter to apply to the final audio
 - [ ] Create or adapt datasets with emotion for training the TTS models
 - [ ] Apply the robot filter to the emotion dataset
 - [ ] Train different models for different moods and personas (notebooks already available to train new models using GlowTTS and VITS)
