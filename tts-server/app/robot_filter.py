@@ -37,7 +37,7 @@ VB = 0.2
 VL = 0.4
 
 # Controls distortion
-H = 3
+H = 1
 
 # Controls N samples in lookup table; probably leave this alone
 LOOKUP_SAMPLES = 1024
@@ -70,6 +70,45 @@ def raw_diode(signal):
     else:
         result[i] = H*v - H*VL + (H*(VL-VB)**2)/(2*VL-2*VB)
     return result
+
+def spectral_subtraction(audio_data):
+
+    # Spectral Subtraction Parameters
+    noise_reduction_factor = 0.5  # Adjust this parameter to control the amount of noise reduction
+
+    # Read in audio data
+    rate, data = wavfile.read(audio_data)
+
+    # Ensure data is 1-dimensional
+    if data.ndim > 1:
+        data = data[:, 0]  # Keep only the first channel
+
+    # Convert to float and normalize to range -1.0 < data < 1.0
+    data = data.astype(np.float64) / 32768.0
+
+    # Perform noise reduction using spectral subtraction
+    noisy_spectrum = np.fft.fft(data)
+    noise_spectrum = np.abs(noisy_spectrum) * noise_reduction_factor
+    clean_spectrum = np.maximum(np.abs(noisy_spectrum) - noise_spectrum, 0.0)
+    clean_signal = np.fft.ifft(clean_spectrum).real
+
+    # Scale to the original volume
+    scaler = np.max(np.abs(data))
+    clean_signal *= scaler
+
+    # Convert back to 16-bit integers
+    clean_signal = clean_signal.astype(np.int16)
+
+    # Write the cleaned audio to a WAV file
+    output_file = io.BytesIO()
+    wavfile.write(output_file, rate, clean_signal)
+    output_file.seek(0)
+
+    # Read the contents of the WAV file
+    audio_file = output_file.read()
+
+    # Return the cleaned audio file as bytes
+    return audio_file
 
 def apply_robot_voice(audio_data):
     """

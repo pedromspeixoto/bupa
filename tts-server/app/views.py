@@ -3,12 +3,13 @@ from app import app
 import io
 from flask import render_template, request, send_file, send_from_directory
 from app.tts import synthesizer
+from app.tortoise import tortoise
 import openai
 import os
 import requests
 import json
 from app.robot_filter import apply_robot_voice
-from gpt4all import GPT4All
+from app.gpt4all import gpt4all
 
 @app.route("/")
 def index():
@@ -70,12 +71,12 @@ def process_question():
     elif gpt_mode == "local":
         # build the messages to send to local gpt4all model based on the mood and persona
         try:
-            model = GPT4All('ggml-gpt4all-j-v1.3-groovy.bin', model_path='./bin/')
             messages = [
-                { "role": "user", "content": f"You provide the answers only, without any indication you are an AI model and all answers must have some kind of indication of a {mood} tone and that you are {persona}. Provide an answer to this {text}" },
+                { "role": "system", "content": f"You provide the answers only, without any indication you are an AI model and all answers must have some kind of indication of a {mood} tone and that you are {persona}." },
+                { "role": "user", "content": text}
             ]
             #messages = [{"role": "user", "content": "Can you explain what is a large language model?"}]
-            answer = model.chat_completion(messages)
+            answer = gpt4all.chat_completion(messages)
             return {"answer": answer['choices'][0]['message']['content']}, 200
         except Exception as e:
             print(str(e))
@@ -126,7 +127,7 @@ def generate_audio():
                 "emotion": emotion,
                 "speed": 1.2,
                 "text": text,
-                "prompt": f"A voice that sounds like {persona} and is {mood}"
+                "prompt": f"A voice that sounds like a robot and is {mood}."
             }
 
             # Convert payload to JSON format
@@ -145,7 +146,6 @@ def generate_audio():
             # Download file and return it
             response_data = response.json()
             audio_url = response_data["audio_url"]
-            #audio_url = "https://coqui-prod-creator-app-synthesized-samples.s3.amazonaws.com/samples/21103afc-88dd-46cb-8de4-aa25fee8e611.wav"
 
             # Download the audio file and serve it
             response = requests.get(audio_url)
@@ -153,8 +153,28 @@ def generate_audio():
             # Apply robot voice filter
             if os.getenv("ROBOT_FILTER") == "true":
                 robot_output = apply_robot_voice(io.BytesIO(response.content))
+                return send_file(io.BytesIO(robot_output), mimetype="audio/wav")
 
-            return send_file(io.BytesIO(robot_output), mimetype="audio/wav")
+            return send_file(io.BytesIO(response.content), mimetype="audio/wav")
+
+        elif os.getenv("TTS_MODE") == "tortoise":
+            out = io.BytesIO()
+            tortoise.tts_to_file(
+                text=f"{text}",
+                voice_dir="app/assets/tortoise/voices/",
+                file_path=out,
+                # adapt to have different emotions based on mood
+                speaker="niro",
+                num_autoregressive_samples=1,
+                diffusion_iterations=10
+            )
+
+            # Apply robot voice filter
+            if os.getenv("ROBOT_FILTER") == "true":
+                robot_output = apply_robot_voice(io.BytesIO(out.getvalue()))
+                return send_file(io.BytesIO(robot_output), mimetype="audio/wav")
+
+            return send_file(out, mimetype="audio/wav")
 
         elif os.getenv("TTS_MODE") == "default":
             outputs = synthesizer.tts(text)
@@ -165,7 +185,8 @@ def generate_audio():
             if os.getenv("ROBOT_FILTER") == "true":
                 robot_output = apply_robot_voice(io.BytesIO(out.getvalue()))
 
-            return send_file(io.BytesIO(robot_output), mimetype="audio/wav")
+            return send_file(out, mimetype="audio/wav")
+        
         else:
             return {"error": "tts mode not supported"}, 400
 

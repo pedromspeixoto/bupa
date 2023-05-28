@@ -13,7 +13,7 @@ services:
     image: wernight/ngrok:latest
     restart: unless-stopped
     environment:
-      NGROK_AUTH: 
+      NGROK_AUTH: 2QKOQOVRQDyblUWY3njeIgPDtZu_6sAbZvocvzJJLq8qaHXz6
       NGROK_PROTOCOL: https
       NGROK_PORT: bupa:8080
     ports:
