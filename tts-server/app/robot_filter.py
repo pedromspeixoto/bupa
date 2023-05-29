@@ -37,13 +37,13 @@ VB = 0.2
 VL = 0.4
 
 # Controls distortion
-H = 1
+H = 0.1
 
 # Controls N samples in lookup table; probably leave this alone
 LOOKUP_SAMPLES = 1024
 
 # Frequency (in Hz) of modulating frequency
-MOD_F = 50
+MOD_F = 100
 
 def diode_lookup(n_samples):
     result = np.zeros((n_samples,))

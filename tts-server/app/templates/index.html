@@ -35,6 +35,45 @@
             <form action="#" class="max-w-xl mx-auto mt-10" method="post">
 
                 <div>
+                    <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
+                        GPT Settings
+                    </p>
+                    <label class="sr-only"> Mood </label>
+                    <div class="relative border-1">
+                        <select name="gpt_mode" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
+                            <option value="openai">OpenAI</option>
+                            <option value="local">Local</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
+                        TTS Settings
+                    </p>
+                    <label class="sr-only"> Mood </label>
+                    <div class="relative border-1">
+                        <select name="tts_mode" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
+                            <option value="coquiai">CoquiAI</option>
+                            <option value="default">Tacotron (No Emotion)</option>
+                        </select>
+                    </div>
+                    
+                <div class="mt-2">
+                    <label class="sr-only"> Persona </label>
+                    <div class="relative border-1">
+                        <select name="robot_filter" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
+                            <option value="false">Original Voice</option>
+                            <option value="true">Apply Robot Filter</option>
+                        </select>
+                </div>
+                    
+                </div>
+
+                <div>
+                    <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
+                        Bot mood and persona
+                    </p>
                     <label class="sr-only"> Mood </label>
                     <div class="relative border-1">
                         <select name="mood" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
@@ -57,6 +96,9 @@
                 </div>
 
                 <div class="mt-5">
+                    <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
+                        Prompt
+                    </p>
                     <label class="sr-only"> Search </label>
                     <div class="relative border-1">
                         
@@ -102,7 +144,7 @@
                     </button>
                     <div class="mt-8 border-t hidden " id="result">
                         <div class="relative border-1">
-                            <textarea type="text" name="text" id="text_output" maxlength="400" class="block w-full py-3 pl-4 pr-4 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2" rows="5" style="opacity: 0.5; pointer-events: none;">
+                            <textarea type="text" name="text" id="text_output" maxlength="400" class="block w-full py-3 pl-4 pr-4 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2" rows="5" style="opacity: 0.5;">
 
                             </textarea>
                         </div>
@@ -120,7 +162,8 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        let apiError = false
+        let askError = false
+        let audioError = false
         let audioFile;
         var onloadCallback = function() {
       };
@@ -142,10 +185,11 @@
                 if(response)
                 if(response.status != 200) {
                     let resData = await response.json();
-                    apiError = true;
+                    askError = true;
                     alert("error calling api")
                     toggleLoader()
                 }else{
+                    askError = false;
                     let resData = await response.json();
                     // set text properties
                     document.querySelector("#text_output").value = resData.answer
@@ -161,9 +205,10 @@
                         if(response)
                         if(response.status != 200) {
                             let data = await response.json();
-                            apiError = true;
+                            audioError = true;
                             alert("error calling api")
                         }else{
+                            audioError = false;
                             const reader = response.body.getReader();
                             return new ReadableStream({
                                 start(controller) {
@@ -189,7 +234,7 @@
                     })
                     .then((url) => {
                         audioFile = url
-                        if(!apiError){
+                        if(!askError && !audioError){
                             // set audio properties
                             document.querySelector("#audio_output").src = url
                             document.querySelector("#result").classList.remove("hidden")

@@ -10,6 +10,7 @@ import requests
 import json
 from app.robot_filter import apply_robot_voice
 from app.gpt4all import gpt4all
+import traceback
 
 @app.route("/")
 def index():
@@ -41,13 +42,17 @@ def process_question():
     else:
         return {"error": "Please provide the text"}, 400
 
-    gpt_mode = os.getenv("GPT_MODE")
+    if(request.form["gpt_mode"]):
+        gpt_mode = request.form["gpt_mode"]
+    else:
+        return {"error": "Please provide the GPT mode"}, 400
 
     if gpt_mode == "openai":
         # build the messages to send to openai chatgpt based on the mood and persona
         try:
             messages = [
                 { "role": "system", "content": f"You provide the answers only, without any indication you are an AI model and all answers must have some kind of indication of a {mood} tone and that you are {persona}." },
+                { "role": "system", "content": "Create a very short answer limited to 100 words or less." },
                 { "role": "user", "content": text } 
             ]
         except Exception as e:
@@ -68,14 +73,14 @@ def process_question():
             return {"answer": answer}, 200
         except Exception as e:
             return {"error": f"could not get response from openai: {str(e)}"}, 500
+    
     elif gpt_mode == "local":
         # build the messages to send to local gpt4all model based on the mood and persona
         try:
             messages = [
-                { "role": "system", "content": f"You provide the answers only, without any indication you are an AI model and all answers must have some kind of indication of a {mood} tone and that you are {persona}." },
+                { "role": "system", "content": f"You are an assistant that speaks like {persona} and is {mood}."},
                 { "role": "user", "content": text}
             ]
-            #messages = [{"role": "user", "content": "Can you explain what is a large language model?"}]
             answer = gpt4all.chat_completion(messages)
             return {"answer": answer['choices'][0]['message']['content']}, 200
         except Exception as e:
@@ -105,15 +110,26 @@ def generate_audio():
     else:
         return {"error": "Please provide the text"}, 400
 
+    if(request.form["tts_mode"]):
+        tts_mode = request.form["tts_mode"]
+    else:
+        return {"error": "Please provide the TTS mode"}, 400
+
+    if(request.form["robot_filter"]):
+        robot_filter = request.form["robot_filter"]
+    else:
+        robot_filter = "false"
+
     # process answer to speech
     try:
-        if os.getenv("TTS_MODE") == "coqui-ai":                                    
+        if tts_mode == "coquiai":                                    
             # Adapt emotion to have first letter capitalized
             emotion = mood.capitalize()
 
             # Read environment variables
             url = os.getenv("COQUI_AI_BASE_URL")
             bearer_token = os.getenv("COQUI_AI_API_KEY")
+            voice_id = os.getenv("COQUI_AI_VOICE_ID")
 
             # Request headers
             headers = {
@@ -127,7 +143,7 @@ def generate_audio():
                 "emotion": emotion,
                 "speed": 1.2,
                 "text": text,
-                "prompt": f"A voice that sounds like a robot and is {mood}."
+                "voice_id": voice_id,
             }
 
             # Convert payload to JSON format
@@ -151,39 +167,39 @@ def generate_audio():
             response = requests.get(audio_url)
 
             # Apply robot voice filter
-            if os.getenv("ROBOT_FILTER") == "true":
+            if robot_filter == "true":
                 robot_output = apply_robot_voice(io.BytesIO(response.content))
                 return send_file(io.BytesIO(robot_output), mimetype="audio/wav")
 
             return send_file(io.BytesIO(response.content), mimetype="audio/wav")
 
-        elif os.getenv("TTS_MODE") == "tortoise":
+        elif tts_mode == "tortoise":
             out = io.BytesIO()
             tortoise.tts_to_file(
                 text=f"{text}",
                 voice_dir="app/assets/tortoise/voices/",
                 file_path=out,
-                # adapt to have different emotions based on mood
-                speaker="niro",
+                speaker=f"eds-{mood}",
                 num_autoregressive_samples=1,
                 diffusion_iterations=10
             )
 
             # Apply robot voice filter
-            if os.getenv("ROBOT_FILTER") == "true":
+            if robot_filter == "true":
                 robot_output = apply_robot_voice(io.BytesIO(out.getvalue()))
                 return send_file(io.BytesIO(robot_output), mimetype="audio/wav")
 
             return send_file(out, mimetype="audio/wav")
 
-        elif os.getenv("TTS_MODE") == "default":
+        elif tts_mode == "default":
             outputs = synthesizer.tts(text)
             out = io.BytesIO()
             synthesizer.save_wav(outputs, out)
 
             # Apply robot voice filter
-            if os.getenv("ROBOT_FILTER") == "true":
+            if robot_filter == "true":
                 robot_output = apply_robot_voice(io.BytesIO(out.getvalue()))
+                return send_file(io.BytesIO(robot_output), mimetype="audio/wav")
 
             return send_file(out, mimetype="audio/wav")
         
@@ -191,5 +207,7 @@ def generate_audio():
             return {"error": "tts mode not supported"}, 400
 
     except Exception as e:
+        # printing stack trace
+        traceback.print_exc()
         print(str(e))
         return {"error": f"could not synthetise response from answer: {str(e)}"}, 500
