@@ -22,14 +22,23 @@ Other videos with earlier versions at `assets/`
 3. Create a `tts-server/.env` file with the following variables:
 
 ```bash
+# options - openai or local
 OPENAI_API_KEY=<your-openai-api-key>
 OPENAI_MODEL=gpt-3.5-turbo
 
-TTS_MODE=coqui-ai
+# options - vits-emo, tortoise or default
+TTS_MODE=vits-emo
+ROBOT_FILTER=true
 
-COQUI_AI_BASE_URL=https://app.coqui.ai/api/v2/samples/from-prompt/
+COQUI_AI_BASE_URL=https://app.coqui.ai/api/v2/samples
 COQUI_AI_API_KEY=<your-coqui-ai-api-key>
+COQUI_AI_VOICE_ID=d2bd7ccb-1b65-4005-9578-32c4e02d8ddf
+
+CONVERSATION_HISTORY=true
 ```
+
+4. To use the local gpt4all model, you first have to download it and place it under `tts-server/assets/bin`;
+5. To use the model (vits-emo) that was trained for the purpose of this, please contact me so that I can provide you the URLs.
 
 ## Usage
 
@@ -62,7 +71,7 @@ COQUI_AI_API_KEY=<your-coqui-ai-api-key>
 1. Build the Docker image with `docker build -t bupa-bot .`
 2. Run the Docker container with `docker run -p 5001:8080 bupa-bot`
 3. Access the server running at `http://localhost:5001/`, configure the Bopa bot and submit a question
-4. Or, as an alternative, to get a response you can send a POST request to `http://localhost:5001/answer` with the following JSON body:
+4. Or, as an alternative, to get a response you can send a POST request to `http://localhost:5001/ask` with the following JSON body:
 
 ```json
 {
