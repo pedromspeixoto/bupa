@@ -1,7 +1,12 @@
 openai
-Flask>=1.1.2
-python-dotenv>=0.21.0
-TTS>=0.8.0
+Flask
+python-dotenv
+TTS
 pydub
 scipy
 gpt4all
+stftpitchshift
+gevent
+redis
+datetime
+uuid

@@ -8,37 +8,144 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700;800&display=swap" rel="stylesheet">
+    <!-- Import the MDI script -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        body, html {
+        body,
+        html {
             font-family: Manrope;
         }
-        svg#L4{
+
+        svg#L4 {
             width: 100px;
             height: 30px;
             margin: 0;
-            display:inline-block;
+            display: inline-block;
         }
+
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .alert {
+            min-height: 67px;
+            width: 560px;
+            max-width: 90%;
+            border-radius: 12px;
+            padding: 16px 22px 17px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+        }
+
+        .alert-warning {
+            background: #f2a600;
+        }
+        .alert-success {
+            background: #12c99b;
+            color: lightgray;
+        }
+        .alert-primary {
+            background: #0676ed;
+        }
+        .alert-dark {
+            background: #151a30;
+        }
+        .alert-error {
+            background: #faaabe;
+            color: lightgray;
+        }
+
+        .alert .icon__wrapper {
+            height: 34px;
+            width: 34px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.253);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .alert .icon__wrapper span {
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .alert p {
+            color: #fff;
+            font-family: Verdana;
+            margin-left: 10px;
+        }
+
+        .alert p a,
+        .alert p a:visited,
+        .alert p a:active {
+            color: #fff;
+        }
+
+        .alert .open {
+            margin-left: auto;
+            margin-right: 5px;
+        }
+
+        .alert .close, .alert .open {
+            color: #fff;
+            transition: transform 0.5s;
+            font-size: 18px;
+            cursor: pointer;
+            float: right;
+        }
+
+        .alert .close:hover, .alert .open:hover {
+            transform: scale(1.3);
+        }
+
+        .scroll-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #e0e0e0;
+        border: none;
+        color: #333;
+        font-size: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .scroll-button:hover {
+        background-color: #777;
+    }
     </style>
 
 </head>
 <body>
-    <section class="py-10 bg-gray-50 sm:py-16 lg:py-24">
+    <section id="main-section" class="py-8 bg-gray-50 sm:py-16 lg:py-24">
         <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div class="max-w-xl mx-auto text-center">
-                <!-- <div class="inline-flex px-4 py-1.5 mx-auto rounded-full bg-gradient-to-r from-fuchsia-600 to-blue-600">
-                    <p class="text-xs font-semibold tracking-widest text-white uppercase">130+ Handcoded Blocks</p>
-                </div> -->
-                <h2 class="mt-10 text-3xl font-bold leading-tight text-black sm:text-3xl lg:text-4xl">Meet Bupa, your daily companion</h2>
+                <h2 class="mt-1 text-3xl font-bold leading-tight text-black sm:text-3xl lg:text-4xl">Meet Bupa, your daily companion</h2>
                 <p class="mt-8 text-base leading-relaxed text-gray-600">First configure the bot mood and persona, and then write your question below to get a customised answer!</p>
             </div>
 
             <form action="#" class="max-w-xl mx-auto mt-10" method="post">
 
+                <div class="hidden">
+                    <input name="conversation_key" id="conversation-key">
+                </div>
+
                 <div>
                     <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
                         GPT Settings
                     </p>
-                    <label class="sr-only"> Mood </label>
+                    <label class="sr-only"> GPT Mode </label>
                     <div class="relative border-1">
                         <select name="gpt_mode" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
                             <option value="openai">OpenAI</option>
@@ -49,38 +156,16 @@
 
                 <div>
                     <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
-                        TTS Settings
-                    </p>
-                    <label class="sr-only"> Mood </label>
-                    <div class="relative border-1">
-                        <select name="tts_mode" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
-                            <option value="coquiai">CoquiAI</option>
-                            <option value="default">Tacotron (No Emotion)</option>
-                        </select>
-                    </div>
-                    
-                <div class="mt-2">
-                    <label class="sr-only"> Persona </label>
-                    <div class="relative border-1">
-                        <select name="robot_filter" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
-                            <option value="false">Original Voice</option>
-                            <option value="true">Apply Robot Filter</option>
-                        </select>
-                </div>
-                    
-                </div>
-
-                <div>
-                    <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
                         Bot mood and persona
                     </p>
                     <label class="sr-only"> Mood </label>
                     <div class="relative border-1">
                         <select name="mood" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
                             <option value="neutral">Neutral</option>
-                            <option value="happy">Happy</option>
                             <option value="angry">Angry</option>
+                            <option value="happy">Happy</option>
                             <option value="sad">Sad</option>
+                            <option value="surprise">Surprise</option>
                         </select>
                     </div>
                 </div>
@@ -95,7 +180,7 @@
                         </select>
                 </div>
 
-                <div class="mt-5">
+                <div id="prompt-div" class="mt-5">
                     <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
                         Prompt
                     </p>
@@ -142,39 +227,130 @@
                             </svg>
                         </div>
                     </button>
-                    <div class="mt-8 border-t hidden " id="result">
-                        <div class="relative border-1">
-                            <textarea type="text" name="text" id="text_output" maxlength="400" class="block w-full py-3 pl-4 pr-4 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2" rows="5" style="opacity: 0.5;">
-
-                            </textarea>
-                        </div>
-                        <audio controls class="w-full mt-8" id="audio_output" src="{{ url_for('static', filename='tts_output.wav') }}">
-
-                        </audio>
-                        <div id="download" class="cursor-pointer mt-5 rounded-lg inline-flex items-center justify-center w-full px-4 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all duration-200 bg-blue-400 border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-white hover:bg-gray-700 ">
-                            Download file
-                        </div>
-                    </div>
                 </div>
             </form>
+
+            <div class="hidden" id="results-container">
+                <p class="mt-8 mb-2 text-base leading-relaxed text-black font-bold">
+                    Conversation History
+                </p>
+                <div id="results-container-inner"></div>
+                <div class="mt-8 border-t">
+                    <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
+                        Reset bot conversation
+                    </p>
+                    <button type="button" id="clear-history" class="rounded-lg inline-flex items-center justify-center w-full px-4 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all duration-200 bg-red-400 border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-white hover:bg-red-700 ">
+                        <span>Clear conversation history</span>
+                    </button>
+                </div>
+            </div>
+            <div id="alerts-container"></div>
         </div>
+        <button id="scrollButton" class="scroll-button hidden">
+            <div class="icon__wrapper">
+                <span class="small material-icons">arrow_drop_up</span>
+            </div>
+        </button>
     </section>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
+
+        function scrollToPrompt() {
+            var element = document.getElementById("prompt-div");
+            element.scrollIntoView({ behavior: "smooth" });
+        }
+
+        function generateRandomIdentifier() {
+            const digits = '0123456789';
+            let identifier = '';
+            for (let i = 0; i < 6; i++) {
+                const randomIndex = Math.floor(Math.random() * digits.length);
+                identifier += digits[randomIndex];
+            }
+                return identifier;
+        }
+
+        function addQuestionAnswer(question, answer, file, audio) {
+
+            const identifier = generateRandomIdentifier();
+
+            const resultDiv = document.createElement('div');
+            resultDiv.className = "mt-8 border-t"
+            resultDiv.innerHTML = `
+                <div class="relative border-1">
+                    <p class="mt-8 mb-4 text-base leading-relaxed text-gray-600"> ${question} </p>
+                    <textarea type="text" name="text" id="text_output" maxlength="400" class="block w-full py-3 pl-4 pr-4 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2" rows="5" style="opacity: 0.5;">${answer}</textarea>
+                </div>
+                <audio controls class="w-full mt-8" id="audio_output" src=${file}></audio>
+                <div id="download-${identifier}" class="cursor-pointer mt-5 rounded-lg inline-flex items-center justify-center w-full px-4 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all duration-200 bg-blue-400 border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-white hover:bg-gray-700 ">
+                    Download file
+                </div>
+            `;
+            
+            const resultsContainer = document.getElementById('results-container-inner');
+            resultsContainer.appendChild(resultDiv);
+
+            document.querySelector(`#download-${identifier}`).addEventListener("click",  function(){
+                const elem = window.document.createElement('a');
+                elem.href = audio;
+                elem.download = "bupa_ai_audio.wav";        
+                document.body.appendChild(elem);
+                elem.click();
+                document.body.removeChild(elem);
+            })
+
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = "mt-8 border-t";
+            alertDiv.innerHTML = `
+                <div class="max-w-xl mx-auto text-center mb-10 alert alert-${type}">
+                    <div class="icon__wrapper">
+                        <span class="small material-icons">warning</span>
+                    </div>
+                    <p>${message}</p>
+                </div>
+            `;
+
+            const alertsContainer = document.getElementById('alerts-container');
+            alertsContainer.appendChild(alertDiv);
+
+            setTimeout(function () {
+                alertDiv.remove();
+            }, 5000);
+        }
+
         let askError = false
         let audioError = false
         let audioFile;
+
         var onloadCallback = function() {
-      };
-      function toggleLoader () {
-        document.querySelector("#svg_container").classList.toggle("hidden")
-        document.querySelector("button span").classList.toggle("hidden")
-      }
-      submit = async (e) =>{
-        document.querySelector("#result").classList.add("hidden")
-        toggleLoader()
-        let data = new FormData(e.target)
+        };
+
+        function toggleLoader () {
+            document.querySelector("#svg_container").classList.toggle("hidden")
+            document.querySelector("button span").classList.toggle("hidden")
+        }
+
+        function generateConversationKey() {
+            return 'conv-' + Math.random().toString(36).substr(2, 10);
+        }
+
+        var conversationKey = localStorage.getItem('conversationKey');
+
+        function resetConversationKey() {
+            localStorage.removeItem('conversationKey');
+            conversationKey = generateConversationKey();
+            localStorage.setItem('conversationKey', conversationKey);
+            document.getElementById('conversation-key').value = conversationKey;
+        }
+
+        submit = async (e) =>{
+            toggleLoader()
+            let data = new FormData(e.target)
+            let originalQuestion = data.get('text')
             e.preventDefault()
 
             // get text response
@@ -186,13 +362,11 @@
                 if(response.status != 200) {
                     let resData = await response.json();
                     askError = true;
-                    alert("error calling api")
+                    showAlert("error calling OpenAI API. please retry.", "error")
                     toggleLoader()
                 }else{
                     askError = false;
                     let resData = await response.json();
-                    // set text properties
-                    document.querySelector("#text_output").value = resData.answer
 
                     let audioData = data
                     audioData.set('text', resData.answer);
@@ -206,7 +380,7 @@
                         if(response.status != 200) {
                             let data = await response.json();
                             audioError = true;
-                            alert("error calling api")
+                            showAlert("error generating audio. please retry.", "error")
                         }else{
                             audioError = false;
                             const reader = response.body.getReader();
@@ -235,9 +409,16 @@
                     .then((url) => {
                         audioFile = url
                         if(!askError && !audioError){
-                            // set audio properties
-                            document.querySelector("#audio_output").src = url
-                            document.querySelector("#result").classList.remove("hidden")
+                            addQuestionAnswer(originalQuestion, resData.answer, url, audioFile)
+                            // if results container is hidden remove it
+                            if (document.querySelector("#results-container").classList.contains("hidden")) {
+                                document.querySelector("#results-container").classList.remove("hidden")
+                            }
+                            // if scroll up button is hidden remove it
+                            if (document.querySelector("#scrollButton").classList.contains("hidden")) {
+                                document.querySelector("#scrollButton").classList.remove("hidden")
+                            }
+                            window.scrollTo(0, document.body.scrollHeight);
                         }
                         console.log(url)
                         toggleLoader()
@@ -250,21 +431,31 @@
             })
         }
 
-        function download() {
-            const elem = window.document.createElement('a');
-                elem.href =audioFile;
-                elem.download = "audio_ulife_ai.wav";        
-                document.body.appendChild(elem);
-                elem.click();        
-                document.body.removeChild(elem);
+        // function to clear conversation history and reset bot
+        function clearConversationHistory() {
+            // reset conversation key
+            resetConversationKey()
+            // hide results container
+            if (!document.querySelector("#results-container").classList.contains("hidden")) {
+                document.querySelector("#results-container").classList.add("hidden")
+            }
+            // hide scroll button
+            if (!document.querySelector("#scrollButton").classList.contains("hidden")) {
+                document.querySelector("#scrollButton").classList.add("hidden")
+            }
+            // remove all results from results inner container
+            document.querySelector("#results-container-inner").innerHTML = ""
         }
 
         window.onload = function(){
+            resetConversationKey()
             document.querySelector("form").addEventListener("submit",  submit)
-            document.querySelector("#download").addEventListener("click",  download)
-
+            document.getElementById("scrollButton").addEventListener("click", scrollToPrompt);
+            document.querySelector("#clear-history").addEventListener("click",  function(){
+                clearConversationHistory()
+                document.getElementById("main-section").scrollIntoView({ behavior: "smooth" });
+            })
         }
-    
       </script>
 
 </body>

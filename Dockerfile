@@ -4,7 +4,7 @@ FROM python:3.10
 
 WORKDIR /app
 RUN apt update
-RUN apt-get install -y libsndfile1 ffmpeg cmake git
+RUN apt-get install -y libsndfile1 ffmpeg cmake git espeak-ng
 
 COPY requirements.txt /app/requirements.txt
 RUN pip install -r /app/requirements.txt
@@ -23,6 +23,10 @@ RUN cmake --build . --parallel
 # setup gpt4all python package
 WORKDIR ../../gpt4all-bindings/python
 RUN pip3 install -e .
+
+# TBD - download gpt4all model and copy to bin folder
+
+# TBD - download custom model and copy to bin folder
 
 EXPOSE 5000
 WORKDIR /app/tts-server

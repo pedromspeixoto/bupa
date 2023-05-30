@@ -2,7 +2,7 @@ from distutils.log import error
 from app import app
 import io
 from flask import render_template, request, send_file, send_from_directory
-from app.tts import synthesizer
+from app.tts import synthesizer, vits_emo_synthesizer
 from app.tortoise import tortoise
 import openai
 import os
@@ -11,6 +11,8 @@ import json
 from app.robot_filter import apply_robot_voice
 from app.gpt4all import gpt4all
 import traceback
+import uuid
+from app.conversation_history import save_message, get_messages
 
 @app.route("/")
 def index():
@@ -25,7 +27,7 @@ def favicon():
 def process_question():
     if(request.form["mood"]):
         mood = request.form["mood"]
-        if mood not in ["happy", "sad", "angry", "neutral"]:
+        if mood not in ["happy", "sad", "angry", "neutral", "surprise"]:
             return {"error": "Please provide a valid mood"}, 400
     else:
         return {"error": "Please provide the bot mood"}, 400
@@ -47,19 +49,42 @@ def process_question():
     else:
         return {"error": "Please provide the GPT mode"}, 400
 
+    if (request.form["conversation_key"]):
+        conversation_key = request.form["conversation_key"]
+    else:
+        conversation_key = str(uuid.uuid4())
+
     if gpt_mode == "openai":
         # build the messages to send to openai chatgpt based on the mood and persona
         try:
             messages = [
-                { "role": "system", "content": f"You provide the answers only, without any indication you are an AI model and all answers must have some kind of indication of a {mood} tone and that you are {persona}." },
+                { "role": "system", "content": f"You provide the answers only, without any indication you are an AI model." },
                 { "role": "system", "content": "Create a very short answer limited to 100 words or less." },
-                { "role": "user", "content": text } 
+                { "role": "system", "content": "Instead of \"AI language model\" use the words \"advanced machine\"." },
+                { "role": "system", "content": f"You are an assistant that speaks like {persona} and is {mood}."}
             ]
+
+            if os.getenv("CONVERSATION_HISTORY") == "true":
+                # Retrieve the conversation history messages from Redis
+                num_messages = 100  # Number of messages to retrieve
+                try:
+                    history_messages = get_messages(conversation_key, num_messages)
+                except Exception as e:
+                    print(str(e))
+                    return {"error": f"could not get conversation history messages: {str(e)}"}, 500
+
+                # Append the conversation history messages to the messages list
+                for msg in history_messages:
+                    message_type = "assistant" if msg["type"] == "assistant" else "user"
+                    messages.append({"role": message_type, "content": msg["message"]})
+
+            # Append the user's question to the messages list
+            messages.append({ "role": "user", "content": text })
         except Exception as e:
             print(str(e))
             return {"error": f"could not build system message to send to openai: {str(e)}"}, 500
 
-        # process the question and generate response from openai chatgpt
+        # Process the question and generate response from openai chatgpt
         try:
             response = openai.ChatCompletion.create(
                 api_key=os.getenv("OPENAI_API_KEY"),
@@ -68,9 +93,16 @@ def process_question():
                 temperature=0.2
             )
             answer = response.choices[0].message["content"]
-            #answer = "Feeling angry, I am."
 
-            return {"answer": answer}, 200
+            # Save the question and answer to Redis
+            if os.getenv("CONVERSATION_HISTORY") == "true":
+                try:
+                    save_message(conversation_key, "user", text)
+                    save_message(conversation_key, "assistant", answer)
+                except Exception as e:
+                    print(f"error. could not save question and answer to conversation history: {str(e)}")
+
+            return {"conversation_key": conversation_key, "answer": answer}, 200
         except Exception as e:
             return {"error": f"could not get response from openai: {str(e)}"}, 500
     
@@ -79,6 +111,8 @@ def process_question():
         try:
             messages = [
                 { "role": "system", "content": f"You are an assistant that speaks like {persona} and is {mood}."},
+                { "role": "system", "content": "Create a very short answer limited to 100 words or less." },
+                { "role": "system", "content": "Instead of \"AI language model\" use the words \"advanced machine\"." },
                 { "role": "user", "content": text}
             ]
             answer = gpt4all.chat_completion(messages)
@@ -93,7 +127,7 @@ def process_question():
 def generate_audio():
     if(request.form["mood"]):
         mood = request.form["mood"]
-        if mood not in ["happy", "sad", "angry", "neutral"]:
+        if mood not in ["happy", "sad", "angry", "neutral", "surprise"]:
             return {"error": "Please provide a valid mood"}, 400
     else:
         return {"error": "Please provide the bot mood"}, 400
@@ -110,15 +144,8 @@ def generate_audio():
     else:
         return {"error": "Please provide the text"}, 400
 
-    if(request.form["tts_mode"]):
-        tts_mode = request.form["tts_mode"]
-    else:
-        return {"error": "Please provide the TTS mode"}, 400
-
-    if(request.form["robot_filter"]):
-        robot_filter = request.form["robot_filter"]
-    else:
-        robot_filter = "false"
+    tts_mode = os.getenv("TTS_MODE")
+    robot_filter = os.getenv("ROBOT_FILTER")
 
     # process answer to speech
     try:
@@ -183,6 +210,18 @@ def generate_audio():
                 num_autoregressive_samples=1,
                 diffusion_iterations=10
             )
+
+            # Apply robot voice filter
+            if robot_filter == "true":
+                robot_output = apply_robot_voice(io.BytesIO(out.getvalue()))
+                return send_file(io.BytesIO(robot_output), mimetype="audio/wav")
+
+            return send_file(out, mimetype="audio/wav")
+
+        elif tts_mode == "vits-emo":
+            outputs = vits_emo_synthesizer.tts(text=text, speaker_name=mood)
+            out = io.BytesIO()
+            vits_emo_synthesizer.save_wav(outputs, out)
 
             # Apply robot voice filter
             if robot_filter == "true":
