@@ -4,6 +4,9 @@ import datetime
 import os
 import json
 
+# Constants
+MESSAGE_EXPIRATION_MINUTES = 30
+
 # Connect to Redis
 if os.getenv("CONVERSATION_HISTORY")=="true":
 
@@ -52,7 +55,7 @@ def save_message(conversation_key, message_type, message):
     redis_client.rpush(conversation_key, json.dumps(message_data))
 
     # Set the expiration time for the conversation key
-    expiration_time = datetime.datetime.now() + datetime.timedelta(days=1)
+    expiration_time = datetime.datetime.now() + datetime.timedelta(minutes=MESSAGE_EXPIRATION_MINUTES)
     redis_client.expireat(conversation_key, expiration_time)
 
     return message_id

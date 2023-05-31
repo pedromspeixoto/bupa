@@ -127,165 +127,256 @@
     </style>
 
 </head>
-<body>
-    <section id="main-section" class="py-8 bg-gray-50 sm:py-16 lg:py-24">
-        <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div class="max-w-xl mx-auto text-center">
-                <h2 class="mt-1 text-3xl font-bold leading-tight text-black sm:text-3xl lg:text-4xl">Meet Bupa, your daily companion</h2>
-                <p class="mt-8 text-base leading-relaxed text-gray-600">First configure the bot mood and persona, and then write your question below to get a customised answer!</p>
-            </div>
-
-            <form action="#" class="max-w-xl mx-auto mt-10" method="post">
-
-                <div class="hidden">
-                    <input name="conversation_key" id="conversation-key">
-                </div>
-
-                <div>
-                    <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
-                        GPT Settings
-                    </p>
-                    <label class="sr-only"> GPT Mode </label>
-                    <div class="relative border-1">
-                        <select name="gpt_mode" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
-                            <option value="openai">OpenAI</option>
-                            <option value="local">Local</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div>
-                    <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
-                        Bot mood and persona
-                    </p>
-                    <label class="sr-only"> Mood </label>
-                    <div class="relative border-1">
-                        <select name="mood" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
-                            <option value="neutral">Neutral</option>
-                            <option value="angry">Angry</option>
-                            <option value="happy">Happy</option>
-                            <option value="sad">Sad</option>
-                            <option value="surprise">Surprise</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="mt-2">
-                    <label class="sr-only"> Persona </label>
-                    <div class="relative border-1">
-                        <select name="persona" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
-                            <option value="optimus prime">Optimus Prime</option>
-                            <option value="shakespeare">Shakespeare</option>
-                            <option value="yoda">Yoda</option>
-                        </select>
-                </div>
-
-                <div id="prompt-div" class="mt-5">
-                    <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
-                        Prompt
-                    </p>
-                    <label class="sr-only"> Search </label>
-                    <div class="relative border-1">
-                        
-                        <textarea type="text" name="text" maxlength="400" placeholder="Enter your question here..." class="block w-full py-3 pl-4 pr-4 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2" rows="5"></textarea>
-                    </div>
-                    <div id="html_element" class="mt-5"></div>
-                    <br>
-                </div>
-                <div class="mt-5">
-                  
-                    <button 
-                    type="submit" class="rounded-lg inline-flex items-center justify-center w-full px-4 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all duration-200 bg-gray-900 border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-white hover:bg-gray-700 ">
-                        <span>Get answer</span>
-                        <div class="hidden" id="svg_container">
-                            <svg version="1.1" id="L4"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-                            viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
-                            <circle fill="#fff" stroke="none" cx="6" cy="50" r="6">
-                                <animate
-                                attributeName="opacity"
-                                dur="1s"
-                                values="0;1;0"
-                                repeatCount="indefinite"
-                                begin="0.1"/>    
-                            </circle>
-                            <circle fill="#fff" stroke="none" cx="26" cy="50" r="6">
-                                <animate
-                                attributeName="opacity"
-                                dur="1s"
-                                values="0;1;0"
-                                repeatCount="indefinite" 
-                                begin="0.2"/>       
-                            </circle>
-                            <circle fill="#fff" stroke="none" cx="46" cy="50" r="6">
-                                <animate
-                                attributeName="opacity"
-                                dur="1s"
-                                values="0;1;0"
-                                repeatCount="indefinite" 
-                                begin="0.3"/>     
-                            </circle>
-                            </svg>
-                        </div>
-                    </button>
-                </div>
-            </form>
-
-            <div class="hidden" id="results-container">
-                <p class="mt-8 mb-2 text-base leading-relaxed text-black font-bold">
-                    Conversation History
-                </p>
-                <div id="results-container-inner"></div>
-                <div class="mt-8 border-t">
-                    <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
-                        Reset bot conversation
-                    </p>
-                    <button type="button" id="clear-history" class="rounded-lg inline-flex items-center justify-center w-full px-4 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all duration-200 bg-red-400 border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-white hover:bg-red-700 ">
-                        <span>Clear conversation history</span>
-                    </button>
-                </div>
-            </div>
-            <div id="alerts-container"></div>
+<body class="bg-gray-50">
+    <section id="main-section" class="py-6 bg-gray-50 sm:py-12 lg:py-16">
+        <div class="max-w-xl mx-auto text-center">
+            <h2 class="text-3xl font-bold leading-tight text-black sm:text-3xl lg:text-4xl">Meet Bupa, your daily companion.</h2>
         </div>
-        <button id="scrollButton" class="scroll-button hidden">
-            <div class="icon__wrapper">
-                <span class="small material-icons">arrow_drop_up</span>
+
+        <div class="page" id="page1">
+            <div class="max-w-xl mx-auto text-center">
+                <p class="mt-8 text-base leading-relaxed text-gray-600">Perform the inital setup so that you can get to know your new best friend.</p>
+                <div id="html_element" class="mt-5 border-t"></div>
             </div>
-        </button>
+            <div class="px-2 mx-auto max-w-7xl sm:px-2 lg:px-8">
+                <form id="form-user-details" action="#" class="max-w-xl mx-auto" method="post">
+
+                    <!-- User name -->
+                    <div>
+                        <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
+                            How would you like to be called?
+                        </p>
+                        <div class="relative border-1">
+                            <input type="text" id="username" name="username" pattern="[^\s]+" class="block w-full py-3 pl-4 pr-4 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2" required>
+                        </div>
+                    </div>
+
+                    <!-- User age -->
+                    <div class="mt-2">
+                        <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
+                            Sorry to ask, but how old are you?
+                        </p>
+                        <div class="relative border-1">
+                            <input type="number" id="age" name="age" min="1" max="150" class="block w-100 py-3 pl-4 pr-4 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2" required>
+                        </div>
+                    </div>
+
+                    <!-- Bot persona -->
+                    <div class="mt-2">
+                        <p class="mt-8 mb-2 text-base leading-relaxed text-gray-600">
+                            Bot persona and mood
+                        </p>
+                        <label class="sr-only"> Persona </label>
+                        <div class="relative border-1">
+                            <select name="persona" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
+                                <option value="god">God</option>
+                                <option value="optimus prime">Optimus Prime</option>
+                                <option value="shakespeare">Shakespeare</option>
+                                <option value="yoda">Yoda</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Bot mood -->
+                    <div>
+                        <label class="sr-only"> Mood </label>
+                        <div class="mt-2 relative border-1">
+                            <select name="mood" class="block w-full py-3 pl-4 pr-8 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2">
+                                <option value="angry">Angry</option>
+                                <option value="neutral">Neutral</option>
+                                <option value="happy">Happy</option>
+                                <option value="sad">Sad</option>
+                                <option value="surprise">Surprise</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Next button -->
+                    <div class="mt-5">
+                        <button id="next-button" type="submit" class="rounded-lg inline-flex items-center justify-center w-full px-4 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all duration-200 bg-gray-900 border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-white hover:bg-gray-700 ">
+                            <span id="button-span-next">Next</span>
+                            <div class="hidden" id="svg_container_next">
+                                <svg version="1.1" id="L4"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
+                                <circle fill="#fff" stroke="none" cx="6" cy="50" r="6">
+                                    <animate
+                                    attributeName="opacity"
+                                    dur="1s"
+                                    values="0;1;0"
+                                    repeatCount="indefinite"
+                                    begin="0.1"/>    
+                                </circle>
+                                <circle fill="#fff" stroke="none" cx="26" cy="50" r="6">
+                                    <animate
+                                    attributeName="opacity"
+                                    dur="1s"
+                                    values="0;1;0"
+                                    repeatCount="indefinite" 
+                                    begin="0.2"/>       
+                                </circle>
+                                <circle fill="#fff" stroke="none" cx="46" cy="50" r="6">
+                                    <animate
+                                    attributeName="opacity"
+                                    dur="1s"
+                                    values="0;1;0"
+                                    repeatCount="indefinite" 
+                                    begin="0.3"/>     
+                                </circle>
+                                </svg>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Placeholder for the alerts container -->
+                    <div id="user-alerts-container">
+
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <div class="page" id="page2" style="display: none;">
+            <div class="max-w-xl mx-auto text-center">
+                <p class="mt-8 text-base leading-relaxed text-gray-600">Your companion is now configured, don't be afraid to ask any uncomfortable questions!</p>
+                <div id="html_element" class="mt-5 border-t"></div>
+            </div>
+            <div class="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+                <form id="form-prompt" action="#" class="max-w-xl mx-auto mt-8" method="post">
+
+                    <!-- Conversation key placeholder -->
+                    <div class="hidden">
+                        <input name="conversation_key" id="conversation-key">
+                    </div>
+
+                    <!-- Conversation History -->
+                    <div class="hidden" id="results-container">
+                        <div id="results-container-inner"></div>
+                    </div>
+
+                    <!-- Prompt and submit prompt -->
+                    <div id="prompt-div" class="mt-8">
+                        <div class="relative border-1">
+                            <textarea id="promp-textarea" type="text" name="text" maxlength="400" placeholder="Enter your question here..." class="block w-full py-3 pl-4 pr-4 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2" rows="5"></textarea>
+                        </div>
+                        <div id="html_element" class="mt-5"></div>
+                        <br>
+                    </div>
+                    <div class="mt-2">
+                        <button 
+                        type="submit" id="send-button" class="rounded-lg inline-flex items-center justify-center w-full px-4 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all duration-200 bg-gray-900 border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-white hover:bg-gray-700 ">
+                            <span id="button-span-send">Send</span>
+                            <div class="hidden" id="svg_container">
+                                <svg version="1.1" id="L4"  xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+                                viewBox="0 0 100 100" enable-background="new 0 0 0 0" xml:space="preserve">
+                                <circle fill="#fff" stroke="none" cx="6" cy="50" r="6">
+                                    <animate
+                                    attributeName="opacity"
+                                    dur="1s"
+                                    values="0;1;0"
+                                    repeatCount="indefinite"
+                                    begin="0.1"/>    
+                                </circle>
+                                <circle fill="#fff" stroke="none" cx="26" cy="50" r="6">
+                                    <animate
+                                    attributeName="opacity"
+                                    dur="1s"
+                                    values="0;1;0"
+                                    repeatCount="indefinite" 
+                                    begin="0.2"/>       
+                                </circle>
+                                <circle fill="#fff" stroke="none" cx="46" cy="50" r="6">
+                                    <animate
+                                    attributeName="opacity"
+                                    dur="1s"
+                                    values="0;1;0"
+                                    repeatCount="indefinite" 
+                                    begin="0.3"/>     
+                                </circle>
+                                </svg>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Placeholder for the alerts container -->
+                    <div id="alerts-container">
+
+                    </div>
+
+                    <!-- Button to clear bot conversation -->
+                    <div class="mt-8 border-t">
+                        <button type="button" id="clear-history" class="rounded-lg inline-flex items-center justify-center w-full px-4 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all duration-200 bg-red-700 border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-white hover:bg-red-400 ">
+                            <span>Clear conversation history</span>
+                        </button>
+                    </div>
+
+                    <!-- Button to configure new bot -->
+                    <div class="mt-8 border-t">
+                        <button type="button" id="configure-new-bot" class="rounded-lg inline-flex items-center justify-center w-full px-4 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all duration-200 bg-purple-700 border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-white hover:bg-purple-400 ">
+                            <span>Configure new bot</span>
+                        </button>
+                    </div>
+                </form>
+
+                <button id="scrollButton" class="scroll-button hidden">
+                    <div class="icon__wrapper">
+                        <span class="small material-icons">arrow_drop_up</span>
+                    </div>
+                </button>
+            </div>
+        </div>
     </section>
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
 
-        function scrollToPrompt() {
-            var element = document.getElementById("prompt-div");
-            element.scrollIntoView({ behavior: "smooth" });
-        }
+        ///////////////////////////////////////////////////
+        ///////////////// JS functions ////////////////////
+        ///////////////////////////////////////////////////
 
-        function generateRandomIdentifier() {
-            const digits = '0123456789';
-            let identifier = '';
-            for (let i = 0; i < 6; i++) {
-                const randomIndex = Math.floor(Math.random() * digits.length);
-                identifier += digits[randomIndex];
-            }
-                return identifier;
-        }
+        // Define variables
+        var currentPage = 1;
+        let askError = false;
+        let audioError = false;
+        let audioFile;
+
+        // Init user and bot variables
+        let username;
+        let age;
+        let mood;
+        let persona;
+
+        // Define automatic responses from the bot
+        let poolingEnabled = false;
+        let poolingCounter = 0;
+        let intervalId;
+
+        // Set onload callback
+        var onloadCallback = function() {
+        };
+
+        // Get initial conversation key
+        var conversationKey = localStorage.getItem('conversationKey');
+
+        ///////////////////////////////////////////////////
+        ///////////////// HTML functions //////////////////
+        ///////////////////////////////////////////////////
 
         function addQuestionAnswer(question, answer, file, audio) {
 
             const identifier = generateRandomIdentifier();
 
             const resultDiv = document.createElement('div');
-            resultDiv.className = "mt-8 border-t"
             resultDiv.innerHTML = `
-                <div class="relative border-1">
-                    <p class="mt-8 mb-4 text-base leading-relaxed text-gray-600"> ${question} </p>
-                    <textarea type="text" name="text" id="text_output" maxlength="400" class="block w-full py-3 pl-4 pr-4 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2" rows="5" style="opacity: 0.5;">${answer}</textarea>
+                <div">
+                    <p id="${identifier}" class="mb-4 text-base leading-relaxed text-gray-600"> ${question} </p>
+                    <textarea type="text" name="text-output-${identifier}" id="text-output--${identifier}" maxlength="400" class="block w-full py-3 pl-4 pr-4 text-base font-normal leading-7 text-gray-900 placeholder-gray-500 bg-white border border-gray-500 rounded-md focus:ring-white focus:border-white focus:ring-offset-2" rows="5" style="opacity: 0.5;" readonly>${answer}</textarea>
                 </div>
-                <audio controls class="w-full mt-8" id="audio_output" src=${file}></audio>
+                <audio controls class="w-full mt-8" id="audio_output" autoplay src=${file}></audio>
                 <div id="download-${identifier}" class="cursor-pointer mt-5 rounded-lg inline-flex items-center justify-center w-full px-4 py-4 text-sm font-bold tracking-widest text-white uppercase transition-all duration-200 bg-blue-400 border border-transparent focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-white hover:bg-gray-700 ">
                     Download file
                 </div>
+                <div id="html_element" class="mb-8 mt-8 border-t"></div>
             `;
             
             const resultsContainer = document.getElementById('results-container-inner');
@@ -300,9 +391,10 @@
                 document.body.removeChild(elem);
             })
 
+            return identifier;
         }
 
-        function showAlert(message, type) {
+        function showAlert(container, message, type) {
             const alertDiv = document.createElement('div');
             alertDiv.className = "mt-8 border-t";
             alertDiv.innerHTML = `
@@ -314,7 +406,7 @@
                 </div>
             `;
 
-            const alertsContainer = document.getElementById('alerts-container');
+            const alertsContainer = document.getElementById(container);
             alertsContainer.appendChild(alertDiv);
 
             setTimeout(function () {
@@ -322,23 +414,27 @@
             }, 5000);
         }
 
-        let askError = false
-        let audioError = false
-        let audioFile;
-
-        var onloadCallback = function() {
-        };
-
         function toggleLoader () {
             document.querySelector("#svg_container").classList.toggle("hidden")
-            document.querySelector("button span").classList.toggle("hidden")
+            document.getElementById("button-span-send").classList.toggle("hidden")
+            var button = document.getElementById("send-button");
+            button.disabled = !button.disabled;
         }
+
+        function toggleLoaderNext () {
+            document.querySelector("#svg_container_next").classList.toggle("hidden")
+            document.getElementById("button-span-next").classList.toggle("hidden")
+            var button = document.getElementById("next-button");
+            button.disabled = !button.disabled;
+        }
+
+        ///////////////////////////////////////////////////
+        //////////////// Helper functions /////////////////
+        ///////////////////////////////////////////////////
 
         function generateConversationKey() {
             return 'conv-' + Math.random().toString(36).substr(2, 10);
         }
-
-        var conversationKey = localStorage.getItem('conversationKey');
 
         function resetConversationKey() {
             localStorage.removeItem('conversationKey');
@@ -347,11 +443,84 @@
             document.getElementById('conversation-key').value = conversationKey;
         }
 
+        function clearConversationHistory() {
+            // reset conversation key
+            resetConversationKey()
+            // hide results container
+            if (!document.querySelector("#results-container").classList.contains("hidden")) {
+                document.querySelector("#results-container").classList.add("hidden")
+            }
+            // hide scroll button
+            if (!document.querySelector("#scrollButton").classList.contains("hidden")) {
+                document.querySelector("#scrollButton").classList.add("hidden")
+            }
+            // remove all results from results inner container
+            document.querySelector("#results-container-inner").innerHTML = ""
+        }
+
+        function generateRandomIdentifier() {
+            const digits = '0123456789';
+            let identifier = '';
+            for (let i = 0; i < 6; i++) {
+                const randomIndex = Math.floor(Math.random() * digits.length);
+                identifier += digits[randomIndex];
+            }
+                return identifier;
+        }
+
+        function startPolling() {
+            intervalId = setInterval(() => {
+                            getReminder();
+                        }, 30000);
+        }
+
+        function resetPolling() {
+            poolingCounter = 0;
+            clearInterval(intervalId);
+            startPolling();
+        }
+
+        function stopPolling() {
+            poolingCounter = 0;
+            clearInterval(intervalId);
+        }
+
+        ///////////////////////////////////////////////////
+        ///////////////// Nav functions ///////////////////
+        ///////////////////////////////////////////////////
+
+        function nextPage(page) {
+            document.getElementById(`page${currentPage}`).style.display = 'none';
+            document.getElementById(`page${page}`).style.display = 'block';
+            currentPage = page;
+        }
+
+        function previousPage(page) {
+            document.getElementById('page' + currentPage).style.display = 'none';
+            document.getElementById('page' + page).style.display = 'block';
+            currentPage = page;
+        }
+
+        ///////////////////////////////////////////////////
+        //////////////// Page functions ///////////////////
+        ///////////////////////////////////////////////////
+
         submit = async (e) =>{
             toggleLoader()
-            let data = new FormData(e.target)
-            let originalQuestion = data.get('text')
+            let formData = new FormData(e.target)
+            let data = new FormData()
+            let originalQuestion = formData.get('text')
             e.preventDefault()
+
+            // build body payload from user and bot details
+            data.set('username', username)
+            data.set('age', age)
+            data.set('mood', mood)
+            data.set('persona', persona)
+
+            // build body payload from conversaion
+            data.set('conversation_key', formData.get('conversation_key'))
+            data.set('text', formData.get('text'))
 
             // get text response
             fetch("/ask", {
@@ -360,18 +529,17 @@
             }).then(async (response) => {
                 if(response)
                 if(response.status != 200) {
-                    let resData = await response.json();
-                    askError = true;
-                    showAlert("error calling OpenAI API. please retry.", "error")
+                    let resData = await response.json()
+                    askError = true
+                    showAlert("alerts-container", "error calling OpenAI API. please retry.", "error")
                     toggleLoader()
                 }else{
                     askError = false;
-                    let resData = await response.json();
+                    let resData = await response.json()
 
                     let audioData = data
                     audioData.set('text', resData.answer);
 
-                    // get audio from text
                     fetch("/audio", {
                         method: 'POST', 
                         body: audioData
@@ -380,7 +548,7 @@
                         if(response.status != 200) {
                             let data = await response.json();
                             audioError = true;
-                            showAlert("error generating audio. please retry.", "error")
+                            showAlert("alerts-container", "error generating audio. please retry.", "error")
                         }else{
                             audioError = false;
                             const reader = response.body.getReader();
@@ -409,7 +577,7 @@
                     .then((url) => {
                         audioFile = url
                         if(!askError && !audioError){
-                            addQuestionAnswer(originalQuestion, resData.answer, url, audioFile)
+                            let identifier = addQuestionAnswer(originalQuestion, resData.answer, url, audioFile)
                             // if results container is hidden remove it
                             if (document.querySelector("#results-container").classList.contains("hidden")) {
                                 document.querySelector("#results-container").classList.remove("hidden")
@@ -418,9 +586,11 @@
                             if (document.querySelector("#scrollButton").classList.contains("hidden")) {
                                 document.querySelector("#scrollButton").classList.remove("hidden")
                             }
-                            window.scrollTo(0, document.body.scrollHeight);
+                            // clear form text
+                            document.getElementById('promp-textarea').value = ""
+                            // scroll to identifier
+                            document.getElementById(identifier).scrollIntoView({ behavior: "smooth" });
                         }
-                        console.log(url)
                         toggleLoader()
                     })
                     .catch((err) => {
@@ -431,31 +601,222 @@
             })
         }
 
-        // function to clear conversation history and reset bot
-        function clearConversationHistory() {
-            // reset conversation key
-            resetConversationKey()
-            // hide results container
-            if (!document.querySelector("#results-container").classList.contains("hidden")) {
-                document.querySelector("#results-container").classList.add("hidden")
+        next = async (e) => {
+            toggleLoaderNext()
+            let data = new FormData(e.target)
+            e.preventDefault()
+
+            // set global values
+            username = data.get('username')
+            age = data.get('age')
+            mood = data.get('mood')
+            persona = data.get('persona')
+
+            // get text response
+            fetch("/greeting", {
+                method: 'POST', 
+                body: data
+            }).then(async (response) => {
+                if(response)
+                if(response.status != 200) {
+                    let resData = await response.json()
+                    askError = true
+                    showAlert("user-alerts-container", "error configuring bot. please retry.", "error")
+                    toggleLoaderNext()
+                }else{
+                    askError = false;
+                    let resData = await response.json()
+
+                    let audioData = data
+                    audioData.set('text', resData.answer);
+
+                    fetch("/audio", {
+                        method: 'POST', 
+                        body: audioData
+                    }).then(async (response) => {
+                        if(response)
+                        if(response.status != 200) {
+                            let data = await response.json();
+                            audioError = true;
+                            showAlert("alerts-container", "error configuring bot. please retry.", "error")
+                        }else{
+                            audioError = false;
+                            const reader = response.body.getReader();
+                            return new ReadableStream({
+                                start(controller) {
+                                    return pump();
+                                    function pump() {
+                                    return reader.read().then(({ done, value }) => {
+                                        if (done) {
+                                        controller.close();
+                                        return;
+                                        }
+                                        controller.enqueue(value);
+                                        return pump();
+                                    });
+                                    }
+                                }
+                        })
+                        }
+                    })
+                    .then((stream) => new Response(stream))
+                    .then((response) => response.blob())
+                    .then((blob) => {
+                        return URL.createObjectURL(blob)
+                    })
+                    .then((url) => {
+                        audioFile = url
+                        if(!askError && !audioError){
+                            let identifier = addQuestionAnswer("", resData.answer, url, audioFile)
+                            // if results container is hidden remove it
+                            if (document.querySelector("#results-container").classList.contains("hidden")) {
+                                document.querySelector("#results-container").classList.remove("hidden")
+                            }
+                            // if scroll up button is hidden remove it
+                            if (document.querySelector("#scrollButton").classList.contains("hidden")) {
+                                document.querySelector("#scrollButton").classList.remove("hidden")
+                            }
+                            // clear form text
+                            document.getElementById('promp-textarea').value = ""
+                            // scroll to identifier
+                            document.getElementById(identifier).scrollIntoView({ behavior: "smooth" });
+                            // go to next page
+                            nextPage(2)
+                            startPolling()
+                        }
+                        toggleLoaderNext()
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    });
+
+                }
+            })
+        }
+
+        async function getReminder(){
+            toggleLoader()
+            let data = new FormData()
+
+            // build body payload from user and bot details
+            data.set('username', username)
+            data.set('age', age)
+            data.set('mood', mood)
+            data.set('persona', persona)
+
+            let reminderApi = "/reminder"
+
+            if(poolingCounter > 2){
+                // if it is above 5, stop pooling
+                stopPolling()
+                // reset pooling counter
+                poolingCounter = 0
+                // set reminder api to /reminder
+                reminderApi = "/goodbye"
             }
-            // hide scroll button
-            if (!document.querySelector("#scrollButton").classList.contains("hidden")) {
-                document.querySelector("#scrollButton").classList.add("hidden")
-            }
-            // remove all results from results inner container
-            document.querySelector("#results-container-inner").innerHTML = ""
+
+            // get text response
+            fetch(reminderApi, {
+                method: 'POST', 
+                body: data
+            }).then(async (response) => {
+                if(response)
+                if(response.status != 200) {
+                    let resData = await response.json()
+                    askError = true
+                    toggleLoader()
+                }else{
+                    askError = false;
+                    let resData = await response.json()
+
+                    let audioData = data
+                    audioData.set('text', resData.answer);
+
+                    fetch("/audio", {
+                        method: 'POST', 
+                        body: audioData
+                    }).then(async (response) => {
+                        if(response)
+                        if(response.status != 200) {
+                            let data = await response.json();
+                            audioError = true;
+                        }else{
+                            audioError = false;
+                            const reader = response.body.getReader();
+                            return new ReadableStream({
+                                start(controller) {
+                                    return pump();
+                                    function pump() {
+                                    return reader.read().then(({ done, value }) => {
+                                        if (done) {
+                                        controller.close();
+                                        return;
+                                        }
+                                        controller.enqueue(value);
+                                        return pump();
+                                    });
+                                    }
+                                }
+                        })
+                        }
+                    })
+                    .then((stream) => new Response(stream))
+                    .then((response) => response.blob())
+                    .then((blob) => {
+                        return URL.createObjectURL(blob)
+                    })
+                    .then((url) => {
+                        audioFile = url
+                        if(!askError && !audioError){
+                            let identifier = addQuestionAnswer("", resData.answer, url, audioFile)
+                            // if results container is hidden remove it
+                            if (document.querySelector("#results-container").classList.contains("hidden")) {
+                                document.querySelector("#results-container").classList.remove("hidden")
+                            }
+                            // if scroll up button is hidden remove it
+                            if (document.querySelector("#scrollButton").classList.contains("hidden")) {
+                                document.querySelector("#scrollButton").classList.remove("hidden")
+                            }
+                            // clear form text
+                            document.getElementById('promp-textarea').value = ""
+                            // scroll to identifier
+                            document.getElementById(identifier).scrollIntoView({ behavior: "smooth" });
+                        }
+                        toggleLoader()
+                        poolingCounter++
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    });
+                }
+            })
         }
 
         window.onload = function(){
-            resetConversationKey()
-            document.querySelector("form").addEventListener("submit",  submit)
-            document.getElementById("scrollButton").addEventListener("click", scrollToPrompt);
+            resetConversationKey();
+            // prompt form and send button
+            document.getElementById("form-prompt").addEventListener("submit",  submit);
+            document.getElementById("send-button").addEventListener("click", resetPolling);
+            // user form and send button
+            document.getElementById("form-user-details").addEventListener("submit",  next);
+            // scroll button
+            document.getElementById("scrollButton").addEventListener("click", function(){
+                document.getElementById("main-section").scrollIntoView({ behavior: "smooth" });
+            });
+            // clear history button
             document.querySelector("#clear-history").addEventListener("click",  function(){
-                clearConversationHistory()
+                clearConversationHistory();
+                stopPolling();
                 document.getElementById("main-section").scrollIntoView({ behavior: "smooth" });
             })
+            // configure new button
+            document.querySelector("#configure-new-bot").addEventListener("click",  function(){
+                clearConversationHistory();
+                stopPolling();
+                previousPage(1);
+            })
         }
+
       </script>
 
 </body>

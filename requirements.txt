@@ -10,3 +10,4 @@ gevent
 redis
 datetime
 uuid
+pedalboard

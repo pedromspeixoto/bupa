@@ -5,8 +5,12 @@ from gevent.pywsgi import WSGIServer
 
 def main():
     load_dotenv()
-    http_server = WSGIServer(("::", 8080), app)
-    http_server.serve_forever()
+    if os.getenv("APP_MODE") == "productions":
+        http_server = WSGIServer(("::", 8080), app)
+        http_server.serve_forever()
+    else:
+        # Start the Flask development web server
+        app.run(host="::", port=8080, debug=True)
 
 if __name__ == "__main__":
     main()
