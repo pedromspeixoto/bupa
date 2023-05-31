@@ -5,14 +5,11 @@ customised answers to questions based on a given context.
 
 ## Showcase
 
-### (1.1) Short emotions with robot filter tts demo as of 26 May 2023
+### Complete demo as of 30 May 2023
 
-https://github.com/pedromspeixoto/bupa/assets/35801678/05022041-4495-4e74-b5f8-825f67ff32fc
+https://github.com/pedromspeixoto/bupa/assets/35801678/b52945a9-edfb-4b18-a02f-ed76c519c1af
 
-### (1.0) Complete demo as of 29 April 2023
-
-https://user-images.githubusercontent.com/35801678/235898200-560442c3-7408-4bfa-a239-d141a72e5605.mp4
-
+Other videos with earlier versions at `assets/`
 
 ## Prerequisites
 
@@ -25,14 +22,23 @@ https://user-images.githubusercontent.com/35801678/235898200-560442c3-7408-4bfa-
 3. Create a `tts-server/.env` file with the following variables:
 
 ```bash
+# options - openai or local
 OPENAI_API_KEY=<your-openai-api-key>
 OPENAI_MODEL=gpt-3.5-turbo
 
-TTS_MODE=coqui-ai
+# options - vits-emo, tortoise or default
+TTS_MODE=vits-emo
+ROBOT_FILTER=true
 
-COQUI_AI_BASE_URL=https://app.coqui.ai/api/v2/samples/from-prompt/
+COQUI_AI_BASE_URL=https://app.coqui.ai/api/v2/samples
 COQUI_AI_API_KEY=<your-coqui-ai-api-key>
+COQUI_AI_VOICE_ID=d2bd7ccb-1b65-4005-9578-32c4e02d8ddf
+
+CONVERSATION_HISTORY=true
 ```
+
+4. To use the local gpt4all model, you first have to download it and place it under `tts-server/assets/bin`;
+5. To use the model (vits-emo) that was trained for the purpose of this, please contact me so that I can provide you the URLs.
 
 ## Usage
 
@@ -65,7 +71,7 @@ COQUI_AI_API_KEY=<your-coqui-ai-api-key>
 1. Build the Docker image with `docker build -t bupa-bot .`
 2. Run the Docker container with `docker run -p 5001:8080 bupa-bot`
 3. Access the server running at `http://localhost:5001/`, configure the Bopa bot and submit a question
-4. Or, as an alternative, to get a response you can send a POST request to `http://localhost:5001/answer` with the following JSON body:
+4. Or, as an alternative, to get a response you can send a POST request to `http://localhost:5001/ask` with the following JSON body:
 
 ```json
 {
