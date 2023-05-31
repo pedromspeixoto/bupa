@@ -8,6 +8,8 @@ customised answers to questions based on a given context.
 
 ### Bupa Chatbot Demo (31 May 2023)
 
+Note: Please note that there are some "silent" actions within the video to simulate a scenario where a user does not speak with the bot after a certain amount of time. Please do not skip those since you will see a custom message to catch your attention after some period of time.
+
 https://github.com/pedromspeixoto/bupa/assets/35801678/32d33c97-f554-4fe9-b891-16e6d0a46277
 
 Other videos with earlier versions at `assets/`
