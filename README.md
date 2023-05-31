@@ -5,9 +5,9 @@ customised answers to questions based on a given context.
 
 ## Showcase
 
-### Complete demo as of 30 May 2023
+### Bupa Chatbot Demo (31 May 2023)
 
-https://github.com/pedromspeixoto/bupa/assets/35801678/b52945a9-edfb-4b18-a02f-ed76c519c1af
+https://github.com/pedromspeixoto/bupa/assets/35801678/32d33c97-f554-4fe9-b891-16e6d0a46277
 
 Other videos with earlier versions at `assets/`
 
